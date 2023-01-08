@@ -4,12 +4,16 @@ import { useAddress, useContract, MediaRenderer, useNetwork, useNetworkMismatch,
 import { useRouter } from 'next/router';
 import { ChainId, NFT, NATIVE_TOKENS, NATIVE_TOKEN_ADDRESS } from '@thirdweb-dev/sdk';
 import network from '../utils/network';
+import Loader from '../components/Loader';
 
 type Props = {}
 
 function create({ }: Props) {
     const address = useAddress();
     const router = useRouter()
+
+    const [isLoading, setIsLoading] = useState(false)
+
     const { contract } = useContract(
         process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT,
         'marketplace'
@@ -32,6 +36,7 @@ function create({ }: Props) {
 
     const handleCreateListing = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        setIsLoading(true)
         if (networkMismatch) {
             switchNetwork && switchNetwork(network);
             return;
@@ -58,10 +63,12 @@ function create({ }: Props) {
             }, {
                 onSuccess(data, variables, context) {
                     console.log('SUCCESS:', data, variables, context);
+                    setIsLoading(false)
                     router.push("/")
                 },
                 onError(error, variables, context) {
                     console.log('ERROR:', error, variables, context);
+                    setIsLoading(false)
                 }
             })
         }
@@ -81,9 +88,11 @@ function create({ }: Props) {
                 onSuccess(data, variables, context) {
                     console.log('SUCCESS:', data, variables, context);
                     router.push("/")
+                    setIsLoading(false)
                 },
                 onError(error, variables, context) {
                     console.log('ERROR:', error, variables, context);
+                    setIsLoading(false)
                 }
             })
         }
@@ -94,6 +103,7 @@ function create({ }: Props) {
     return (
         <div>
             <Header />
+            {isLoading && <Loader text="Creating Listing..." />}
             <main className='max-w-6xl mx-auto p-10 pt-2 '>
                 <h1 className='text-4xl font-bold '>List an Item</h1>
                 <h2 className='text-xl font-semibold pt-5'>Select an Item you would like to sell</h2>

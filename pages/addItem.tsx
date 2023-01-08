@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react'
 import Header from '../components/Header'
 import { useAddress, useContract } from "@thirdweb-dev/react"
 import { useRouter } from 'next/router';
+import Loader from '../components/Loader';
 
 type Props = {}
 
@@ -9,6 +10,7 @@ function AddItem({ }: Props) {
 
 	const address = useAddress();
 	const router = useRouter()
+	const [isLoading, setIsLoading] = useState<Boolean>(false)
 	const [preview, setPreview] = useState<String>()
 	const [image, setImage] = useState<File>()
 	const { contract } = useContract(
@@ -17,6 +19,7 @@ function AddItem({ }: Props) {
 	)
 	const mintNft = async (e: FormEvent<HTMLFormElement>) => {
 		e.preventDefault()
+		setIsLoading(true)
 		if(!contract || !address) return
 		if(!image){
 			alert("Please select an image")
@@ -39,17 +42,20 @@ function AddItem({ }: Props) {
 			const nft = await transaction.data()
 
 			console.log(receipt, tokenID, nft);
+			setIsLoading(false)
 			router.push('/')
 			
 
 		}catch(error){
 			console.log(error, ">>>> Error")
+			setIsLoading(false)
 		}
 	}
 
 	return (
 		<div>
 			<Header />
+			{isLoading && <Loader text="Creating NFT's..." />}
 			<main className='max-w-6xl mx-auto p-10 border'>
 				<h1 className='text-4xl font-bold'>Add Item to the Marketplace</h1>
 				<h2 className='text-xl font-semibold pt-5'>Item Details</h2>
