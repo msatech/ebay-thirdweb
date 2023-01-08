@@ -5,6 +5,6 @@ module.exports = {
     appDir: true
   },
   images:{
-    domains:['upload.wikimedia.org', 'gateway.ipfscdn.io']
+    domains:['upload.wikimedia.org', 'gateway.ipfscdn.io', 'images.unsplash.com']
   }
 }

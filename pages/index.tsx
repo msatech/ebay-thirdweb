@@ -8,6 +8,8 @@ const Home = () => {
     const { contract } = useContract(process.env.NEXT_PUBLIC_MARKETPLACE_CONTRACT, "marketplace")
     
     const { data: listings, isLoading: loadingListings } = useActiveListings(contract);
+    console.log(listings, "Listsing");
+
     return(
         <div>
             <Header />
